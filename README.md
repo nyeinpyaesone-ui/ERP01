@@ -18,7 +18,7 @@ ERP01 is an enterprise resource planning solution designed to help businesses ma
 
 ### Prerequisites
 
-- Python 3.8 or higher
+- Python 3.12 (matches CI and the devcontainer)
 - pip package manager
 
 ### Setup
@@ -60,11 +60,14 @@ python main.py
 ```
 erp01/
 ├── main.py              # Application entry point
-├── config/              # Configuration files
-├── modules/             # ERP modules
-├── utils/               # Utility functions
-├── tests/               # Test cases
-└── docs/                # Documentation
+├── config/              # Configuration management
+├── modules/             # ERP modules (base.py = BaseModule)
+├── utils/               # Utility functions (logging, validation)
+├── tests/               # Test cases (pytest)
+├── scripts/             # Dev/maintenance automation
+├── sprint_planning/     # Sprint documentation
+├── docs/                # Documentation
+└── .github/workflows/   # CI pipeline
 ```
 
 ## Development
@@ -99,7 +102,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-**nyeinpysone-ui** - [GitHub Profile](https://github.com/nyeinpyaesone-ui)
+**nyeinpyaesone-ui** - [GitHub Profile](https://github.com/nyeinpyaesone-ui)
 
 ## Acknowledgments
 

@@ -11,8 +11,18 @@ echo "=========================================="
 
 # Activate virtual environment if not already active
 if [ -z "$VIRTUAL_ENV" ]; then
-    echo "Activating virtual environment..."
-    source .venv/bin/activate
+    if [ -f ".venv/bin/activate" ]; then
+        echo "Activating virtual environment..."
+        # shellcheck disable=SC1091
+        source .venv/bin/activate
+    elif command -v python >/dev/null 2>&1; then
+        echo "⚠️  No .venv found; using system Python: $(python --version)"
+    else
+        echo "❌ No virtual environment (.venv) and no python on PATH."
+        echo "   Create one with: python3 -m venv .venv && source .venv/bin/activate"
+        echo "   Then install deps: pip install -r requirements.txt"
+        exit 1
+    fi
 fi
 
 # 1. Check code formatting with black
@@ -38,7 +48,7 @@ fi
 # 3. Run tests with coverage
 echo ""
 echo "[3/3] Running tests with coverage (pytest)..."
-if pytest --cov=. --cov-fail-under=80 ; then
+if pytest --cov --cov-fail-under=80 ; then
     echo "✅ Tests passed with sufficient coverage"
 else
     echo "❌ Tests failed or coverage below 80%"

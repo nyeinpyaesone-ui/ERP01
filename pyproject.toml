@@ -1,0 +1,13 @@
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-q -p no:libtmux"
+
+[tool.coverage.run]
+source = ["config", "modules", "utils", "main", "scripts.maintenance"]
+disable_warnings = ["module-not-imported"]
+omit = ["tests/*", ".venv/*"]

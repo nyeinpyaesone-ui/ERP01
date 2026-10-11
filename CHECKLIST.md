@@ -18,7 +18,7 @@
   - pytest & pytest-cov
   - flake8
   - black
-- [x] Environment configuration (`.env`, `.env.example`)
+- [x] Environment configuration template (`.env.example`; `.env` is gitignored)
 
 ### 3. Development Workflow
 - [x] Development flow documentation (`docs/DEV_FLOW.md`)
@@ -38,8 +38,8 @@
 - [x] Unit tests for config module
 - [x] Unit tests for modules
 - [x] Unit tests for utils
-- [x] 93% code coverage achieved
-- [x] All 29 tests passing
+- [x] 94% code coverage achieved
+- [x] All 58 tests passing
 
 ### 6. Maintenance
 - [x] Maintenance script (`scripts/maintenance.py`)
@@ -82,8 +82,8 @@ source .venv/bin/activate
 # Run all quality checks
 ./scripts/dev-check.sh
 
-# Start new feature
-./scripts/new-feature.sh ERP-101 feature-name
+# Start new feature (module name must be snake_case)
+./scripts/new-feature.sh ERP-101 feature_name
 
 # Run tests
 pytest --cov=.
