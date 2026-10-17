@@ -24,7 +24,7 @@ python scripts/maintenance.py backup
 ```
 
 **Backed up:**
-- `config/`, `modules/`, `utils/`, `sprint_planning/` directories
+- `config/`, `modules/`, `utils/`, `docs/` directories
 - `main.py`, `requirements.txt`, `.env.example` files
 
 Backups are stored in `backups/backup_YYYYMMDD_HHMMSS/`

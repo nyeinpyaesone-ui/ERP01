@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-q -p no:libtmux"
+
+[tool.coverage.run]
+# Plain module/package names (importable from the repo root).  Note:
+# "scripts.maintenance" would silently match nothing because scripts/
+# is not a package -- maintenance.py is imported as top-level
+# "maintenance" by tests, so we list that instead.
+source = ["config", "modules", "utils", "main", "maintenance"]
+disable_warnings = ["module-not-imported"]
+omit = ["tests/*", ".venv/*"]

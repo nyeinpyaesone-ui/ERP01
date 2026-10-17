@@ -11,7 +11,7 @@
 ## Getting Started
 
 ### Prerequisites
-- Python 3.8+
+- Python 3.12 (matches CI and the devcontainer)
 - pip
 
 ### Installation
