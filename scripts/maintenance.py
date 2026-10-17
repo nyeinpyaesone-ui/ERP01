@@ -40,7 +40,7 @@ def check_health() -> int:
 
     # Run tests
     result = subprocess.run(
-        ["pytest", "--tb=short"],
+        [sys.executable, "-m", "pytest", "--tb=short"],
         capture_output=True,
         text=True,
         cwd=PROJECT_ROOT,
