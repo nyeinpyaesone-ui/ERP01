@@ -18,20 +18,24 @@ class Config:
     """
 
     def __init__(self, env_file: Optional[str] = None, override: bool = False):
-        load_dotenv(env_file, override=override)
-
         self._settings: Dict[str, Any] = {}
+        # Load the .env file into os.environ first (process env wins unless
+        # override=True), then resolve every value from a single source.
+        # Resolution happens after loading so an empty SECRET_KEY in the
+        # environment is correctly replaced by the default -- which the
+        # security check below then rejects in production mode.
+        load_dotenv(env_file, override=override)
         self._load_defaults()
         self._check_security()
 
     def _load_defaults(self) -> None:
-        """Load default configuration values."""
+        """Resolve configuration values from the environment."""
         self._settings = {
             "APP_NAME": os.getenv("APP_NAME", "ERP01"),
             "APP_ENV": os.getenv("APP_ENV", "development"),
             "DEBUG": os.getenv("DEBUG", "False").lower() == "true",
             "DATABASE_URL": os.getenv("DATABASE_URL", "sqlite:///erp01.db"),
-            "SECRET_KEY": os.getenv("SECRET_KEY", DEFAULT_SECRET_KEY),
+            "SECRET_KEY": os.getenv("SECRET_KEY") or DEFAULT_SECRET_KEY,
             "LOG_LEVEL": os.getenv("LOG_LEVEL", "INFO"),
         }
 
