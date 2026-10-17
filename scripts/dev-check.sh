@@ -48,7 +48,7 @@ fi
 # 3. Run tests with coverage
 echo ""
 echo "[3/3] Running tests with coverage (pytest)..."
-if pytest --cov --cov-fail-under=80 ; then
+if python -m pytest --cov --cov-fail-under=80 ; then
     echo "✅ Tests passed with sufficient coverage"
 else
     echo "❌ Tests failed or coverage below 80%"

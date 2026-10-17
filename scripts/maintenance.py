@@ -65,7 +65,7 @@ def create_backup() -> int:
     print(f"Creating backup in {backup_dir}...")
     backup_dir.mkdir(parents=True, exist_ok=True)
 
-    dirs_to_backup = ["config", "modules", "utils", "sprint_planning"]
+    dirs_to_backup = ["config", "modules", "utils", "docs"]
     for dir_name in dirs_to_backup:
         source = PROJECT_ROOT / dir_name
         if source.exists():

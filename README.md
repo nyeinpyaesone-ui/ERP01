@@ -51,9 +51,6 @@ cp .env.example .env
 python main.py
 ```
 
-## Usage
-
-[Add usage instructions here]
 
 ## Project Structure
 
@@ -65,7 +62,6 @@ erp01/
 ├── utils/               # Utility functions (logging, validation)
 ├── tests/               # Test cases (pytest)
 ├── scripts/             # Dev/maintenance automation
-├── sprint_planning/     # Sprint documentation
 ├── docs/                # Documentation
 └── .github/workflows/   # CI pipeline
 ```
@@ -103,10 +99,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 **nyeinpyaesone-ui** - [GitHub Profile](https://github.com/nyeinpyaesone-ui)
-
-## Acknowledgments
-
-- [List any acknowledgments here]
 
 ---
 
