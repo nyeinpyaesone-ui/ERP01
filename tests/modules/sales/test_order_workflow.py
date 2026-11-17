@@ -10,7 +10,7 @@ from src.modules.sales.models import Customer, Order, OrderItem
 
 @pytest.mark.django_db
 def test_fulfilment_deducts_stock_once_and_rejects_replay():
-    user = get_user_model().objects.create_user("warehouse-user", password="not-used")
+    user = get_user_model().objects.create_user("warehouse-user", password="not-used", is_staff=True)
     category = Category.objects.create(name="Goods")
     product = Product.objects.create(
         sku="SO-ITEM-001", name="Order Item", category=category, unit_price="25.00"
@@ -55,7 +55,7 @@ def test_fulfilment_deducts_stock_once_and_rejects_replay():
 
 @pytest.mark.django_db
 def test_fulfilment_rolls_back_all_lines_when_stock_is_short():
-    user = get_user_model().objects.create_user("short-stock-user", password="not-used")
+    user = get_user_model().objects.create_user("short-stock-user", password="not-used", is_staff=True)
     category = Category.objects.create(name="Goods")
     first = Product.objects.create(
         sku="SO-ROLLBACK-1", name="First", category=category, unit_price="10.00"
@@ -89,7 +89,7 @@ def test_fulfilment_rolls_back_all_lines_when_stock_is_short():
 
 @pytest.mark.django_db
 def test_dashboard_returns_database_backed_metrics():
-    user = get_user_model().objects.create_user("dashboard-user", password="not-used")
+    user = get_user_model().objects.create_user("dashboard-user", password="not-used", is_staff=True)
     client = APIClient()
     client.force_authenticate(user=user)
 
@@ -104,7 +104,7 @@ def test_dashboard_returns_database_backed_metrics():
 
 @pytest.mark.django_db
 def test_order_status_cannot_be_patched_directly():
-    user = get_user_model().objects.create_user("order-patch-user", password="not-used")
+    user = get_user_model().objects.create_user("order-patch-user", password="not-used", is_staff=True)
     customer = Customer.objects.create(name="Patch Test", email="patch@example.test")
     order = Order.objects.create(customer=customer, order_number="SO-NO-PATCH")
     client = APIClient()

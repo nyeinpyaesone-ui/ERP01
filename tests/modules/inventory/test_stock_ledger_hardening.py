@@ -2,8 +2,9 @@
 
 import pytest
 from django.core.exceptions import ValidationError
-from rest_framework.test import APIClient
+from django.db.models import ProtectedError
 from django.contrib.auth import get_user_model
+from rest_framework.test import APIClient
 
 from src.modules.inventory.models import (
     Category,
@@ -51,6 +52,8 @@ def test_stock_movement_is_immutable_and_cannot_be_replayed():
 
     with pytest.raises(ValidationError):
         movement.save()
+    with pytest.raises(ValidationError):
+        movement.delete()
 
     assert StockLevel.objects.get(product=product, warehouse=warehouse).quantity == 12
     assert StockMovement.objects.count() == 1
@@ -74,6 +77,24 @@ def test_adjustment_cannot_reduce_on_hand_below_reservations():
         )
 
     assert StockLevel.objects.get(product=product, warehouse=warehouse).quantity == 20
+
+
+@pytest.mark.django_db
+def test_products_and_warehouses_are_protected_by_stock_ledger():
+    warehouse = Warehouse.objects.create(name="Main", code="MAIN")
+    category = Category.objects.create(name="Goods")
+    product = Product.objects.create(
+        sku="LEDGER-004", name="Ledger Item", category=category, unit_price="10.00"
+    )
+    StockMovement.objects.create(
+        product=product, warehouse=warehouse, movement_type="IN",
+        quantity=1, performed_by="tester",
+    )
+
+    with pytest.raises(ProtectedError):
+        product.delete()
+    with pytest.raises(ProtectedError):
+        warehouse.delete()
 
 
 @pytest.mark.django_db

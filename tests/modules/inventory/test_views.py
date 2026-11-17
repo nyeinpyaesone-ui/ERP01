@@ -4,6 +4,7 @@ Unit Tests for Inventory Views
 Tests for all inventory API viewsets.
 """
 import pytest
+from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient, APIRequestFactory
 from rest_framework import status
 
@@ -22,8 +23,15 @@ class TestWarehouseViewSet:
     """Test cases for WarehouseViewSet."""
     
     @pytest.fixture
-    def api_client(self):
-        return APIClient()
+    def api_client(self, db):
+        user = get_user_model().objects.create_user(
+            username="inventory-staff",
+            password="test-only",
+            is_staff=True,
+        )
+        client = APIClient()
+        client.force_authenticate(user=user)
+        return client
     
     @pytest.fixture
     def warehouses(self, db):
@@ -64,8 +72,8 @@ class TestWarehouseViewSet:
     def test_delete_warehouse(self, db, api_client, warehouses):
         warehouse = warehouses[0]
         response = api_client.delete(f'/api/warehouses/{warehouse.id}/')
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not Warehouse.objects.filter(id=warehouse.id).exists()
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+        assert Warehouse.objects.filter(id=warehouse.id).exists()
 
 
 @pytest.mark.unit
@@ -73,8 +81,15 @@ class TestProductViewSet:
     """Test cases for ProductViewSet."""
     
     @pytest.fixture
-    def api_client(self):
-        return APIClient()
+    def api_client(self, db):
+        user = get_user_model().objects.create_user(
+            username="inventory-staff",
+            password="test-only",
+            is_staff=True,
+        )
+        client = APIClient()
+        client.force_authenticate(user=user)
+        return client
     
     @pytest.fixture
     def category(self, db):
@@ -135,8 +150,15 @@ class TestStockLevelViewSet:
     """Test cases for StockLevelViewSet."""
     
     @pytest.fixture
-    def api_client(self):
-        return APIClient()
+    def api_client(self, db):
+        user = get_user_model().objects.create_user(
+            username="inventory-staff",
+            password="test-only",
+            is_staff=True,
+        )
+        client = APIClient()
+        client.force_authenticate(user=user)
+        return client
     
     @pytest.fixture
     def setup_stock(self, db):
@@ -190,8 +212,15 @@ class TestStockMovementViewSet:
     """Test cases for StockMovementViewSet."""
     
     @pytest.fixture
-    def api_client(self):
-        return APIClient()
+    def api_client(self, db):
+        user = get_user_model().objects.create_user(
+            username="inventory-staff",
+            password="test-only",
+            is_staff=True,
+        )
+        client = APIClient()
+        client.force_authenticate(user=user)
+        return client
     
     @pytest.fixture
     def setup_movement(self, db):

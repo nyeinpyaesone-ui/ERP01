@@ -1,9 +1,14 @@
 """API viewsets for warehouse, product, stock position and stock ledger."""
 
-from django.db.models import F
+from django.db.models import Count, F
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.permissions import IsAdminUser
+
+from src.api.permissions import StaffOrReadOnly
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 
 from .models import Category, Product, StockLevel, StockMovement, Warehouse
@@ -18,28 +23,46 @@ from .serializers import (
 
 
 class WarehouseViewSet(viewsets.ModelViewSet):
+    permission_classes = [StaffOrReadOnly]
     queryset = Warehouse.objects.all()
     serializer_class = WarehouseSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name", "code", "address"]
     ordering_fields = ["name", "code", "created_at"]
 
+    def destroy(self, request, *args, **kwargs):
+        raise MethodNotAllowed(
+            "DELETE",
+            detail="Warehouses are retained for stock and movement history; deactivate instead.",
+        )
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
+    permission_classes = [StaffOrReadOnly]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name", "description"]
     ordering_fields = ["name", "created_at"]
 
+    def get_queryset(self):
+        return super().get_queryset().annotate(children_count=Count("children"))
+
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.select_related("category").all()
+    permission_classes = [StaffOrReadOnly]
+    queryset = Product.objects.select_related("category").prefetch_related("stock_levels").all()
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ["category", "is_active"]
     search_fields = ["sku", "name", "description"]
     ordering_fields = ["name", "sku", "unit_price", "created_at"]
+
+    def destroy(self, request, *args, **kwargs):
+        raise MethodNotAllowed(
+            "DELETE",
+            detail="Products are retained for order and stock history; deactivate instead.",
+        )
 
     @action(detail=True, methods=["get"])
     def stock_summary(self, request, pk=None):
@@ -78,6 +101,11 @@ class StockMovementViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ["product", "warehouse", "movement_type"]
     ordering_fields = ["created_at"]
+
+    def get_permissions(self):
+        if self.action == "adjust_stock":
+            return [IsAdminUser()]
+        return super().get_permissions()
 
     @action(detail=False, methods=["post"])
     def adjust_stock(self, request):

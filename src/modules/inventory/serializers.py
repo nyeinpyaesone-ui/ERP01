@@ -22,7 +22,8 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at"]
 
     def get_children_count(self, obj):
-        return obj.children.count()
+        annotated = getattr(obj, "children_count", None)
+        return annotated if annotated is not None else obj.children.count()
 
 
 class ProductSerializer(serializers.ModelSerializer):

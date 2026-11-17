@@ -1,0 +1,84 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-erp_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      POSTGRES_DB: ${DB_NAME:-erp_db}
+      PGTZ: Asia/Yangon
+      TZ: Asia/Yangon
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/10-erp-extensions.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [erp-network]
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [erp-network]
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: [.env]
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      REDIS_URL: redis://redis:6379/0
+    command: ["sh", "/app/scripts/entrypoint.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - static_data:/app/staticfiles
+    expose: ["8000"]
+    networks: [erp-network]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - static_data:/var/www/static:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    networks: [erp-network]
+
+networks:
+  erp-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_data:

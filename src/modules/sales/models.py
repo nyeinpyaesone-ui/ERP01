@@ -8,6 +8,7 @@ from decimal import Decimal
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models import F, Q
 
 from src.modules.inventory.models import Product
 
@@ -119,6 +120,16 @@ class OrderItem(models.Model):
     class Meta:
         ordering = ["id"]
         unique_together = ["order", "product"]
+        constraints = [
+            models.CheckConstraint(
+                check=Q(quantity__gte=1),
+                name="sales_order_item_quantity_positive",
+            ),
+            models.CheckConstraint(
+                check=Q(discount_amount__lte=F("unit_price") * F("quantity")),
+                name="sales_order_item_discount_lte_subtotal",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.order.order_number}: {self.product.sku} x {self.quantity}"

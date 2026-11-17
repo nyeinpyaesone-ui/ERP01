@@ -6,16 +6,20 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, serializers, status, viewsets
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from src.modules.inventory.models import Product, StockMovement, Warehouse
+
+from src.api.permissions import StaffOrReadOnly
 
 from .models import Customer, Order, OrderItem
 from .serializers import CustomerSerializer, OrderItemSerializer, OrderSerializer
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
+    permission_classes = [StaffOrReadOnly]
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -28,6 +32,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    permission_classes = [StaffOrReadOnly]
     queryset = Order.objects.select_related("customer").prefetch_related("items__product")
     serializer_class = OrderSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -37,6 +42,29 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user.get_username())
+
+    def destroy(self, request, *args, **kwargs):
+        raise MethodNotAllowed(
+            "DELETE",
+            detail="Orders are retained for audit history; use the cancel action.",
+        )
+
+    def update(self, request, *args, **kwargs):
+        """Only draft headers may be edited; status is never writable here."""
+        partial = kwargs.pop("partial", False)
+        with transaction.atomic():
+            order = get_object_or_404(
+                Order.objects.select_for_update(),
+                pk=kwargs.get("pk"),
+            )
+            if order.status != "DRAFT":
+                raise serializers.ValidationError(
+                    {"status": "Only draft orders can be edited."}
+                )
+            serializer = self.get_serializer(order, data=request.data, partial=partial)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        return Response(self.get_serializer(order).data)
 
     @action(detail=True, methods=["post"])
     def add_item(self, request, pk=None):
@@ -133,7 +161,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         return Response(self.get_serializer(order).data)
 
 
-class OrderItemViewSet(viewsets.ModelViewSet):
+class OrderItemViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Order lines are read-only at the collection endpoint.
+
+    New lines are written through the order's locked add_item action so status
+    checks cannot be bypassed by direct create, update or delete requests.
+    """
+
     queryset = OrderItem.objects.select_related("order", "product").all()
     serializer_class = OrderItemSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]

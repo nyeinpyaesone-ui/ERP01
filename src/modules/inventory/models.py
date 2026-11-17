@@ -105,8 +105,8 @@ class StockMovement(models.Model):
         ("ADJUSTMENT", "Adjustment"),
     ]
 
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="movements")
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE, related_name="movements")
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="movements")
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.PROTECT, related_name="movements")
     movement_type = models.CharField(max_length=20, choices=MOVEMENT_TYPES)
     quantity = models.IntegerField()
     reference = models.CharField(max_length=100, blank=True)
@@ -139,8 +139,6 @@ class StockMovement(models.Model):
         if self.movement_type == "ADJUSTMENT" and self.quantity < 0:
             raise ValidationError({"quantity": "Adjustment must be an on-hand quantity."})
 
-        # Lock product then warehouse in stable order. This serializes creation
-        # of a missing StockLevel row and prevents concurrent overselling.
         Product.objects.select_for_update().get(pk=self.product_id)
         Warehouse.objects.select_for_update().get(pk=self.warehouse_id)
         stock, _created = StockLevel.objects.get_or_create(
@@ -169,3 +167,8 @@ class StockMovement(models.Model):
         super().save(*args, **kwargs)
         stock.quantity = new_quantity
         stock.save(update_fields=["quantity", "updated_at"])
+
+    def delete(self, *args, **kwargs):
+        raise ValidationError(
+            "Stock movements are immutable; create a compensating movement."
+        )

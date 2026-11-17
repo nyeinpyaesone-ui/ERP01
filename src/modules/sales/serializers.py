@@ -73,6 +73,14 @@ class OrderItemSerializer(serializers.ModelSerializer):
             )
         if product is not None and not product.is_active:
             raise serializers.ValidationError({"product": "Inactive products cannot be sold."})
+        if product is not None:
+            existing_lines = OrderItem.objects.filter(order=order, product=product)
+            if self.instance is not None:
+                existing_lines = existing_lines.exclude(pk=self.instance.pk)
+            if existing_lines.exists():
+                raise serializers.ValidationError(
+                    {"product": "This product already exists on the order; update quantities before submission."}
+                )
 
         attrs["order"] = order
         return attrs
