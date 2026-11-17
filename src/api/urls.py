@@ -1,18 +1,28 @@
-"""
-API URL Configuration
-"""
+"""Versionless API routing for ERP01."""
 
 from django.urls import include, path
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView)
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
+from .views import (
+    BusinessProfileAPIView,
+    CurrentUserAPIView,
+    DashboardSummaryAPIView,
+    HealthCheckAPIView,
+)
 
 app_name = "api"
 
 urlpatterns = [
-    # Authentication endpoints
+    path("health/", HealthCheckAPIView.as_view(), name="health"),
     path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    # Backward-compatible inventory endpoints
+    path("auth/me/", CurrentUserAPIView.as_view(), name="current_user"),
+    path("dashboard/", DashboardSummaryAPIView.as_view(), name="dashboard"),
+    path(
+        "business-profile/",
+        BusinessProfileAPIView.as_view(),
+        name="business_profile",
+    ),
     path(
         "",
         include(
@@ -20,11 +30,6 @@ urlpatterns = [
             namespace="inventory-legacy",
         ),
     ),
-    # Module API endpoints
     path("inventory/", include("src.modules.inventory.urls")),
-    # path('hr/', include('src.modules.hr.api.urls')),
-    # path('finance/', include('src.modules.finance.api.urls')),
     path("sales/", include("src.modules.sales.urls")),
-    # path('procurement/', include('src.modules.procurement.api.urls')),
-    # path('manufacturing/', include('src.modules.manufacturing.api.urls')),
 ]
