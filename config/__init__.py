@@ -13,18 +13,20 @@ class Config:
             load_dotenv(env_file)
         else:
             load_dotenv()
-        
+
         self._settings: Dict[str, Any] = {}
         self._load_defaults()
 
     def _load_defaults(self) -> None:
         """Load default configuration values."""
         self._settings = {
-            'APP_NAME': os.getenv('APP_NAME', 'ERP01'),
-            'DEBUG': os.getenv('DEBUG', 'False').lower() == 'true',
-            'DATABASE_URL': os.getenv('DATABASE_URL', 'sqlite:///erp01.db'),
-            'SECRET_KEY': os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production'),
-            'LOG_LEVEL': os.getenv('LOG_LEVEL', 'INFO'),
+            "APP_NAME": os.getenv("APP_NAME", "ERP01"),
+            "DEBUG": os.getenv("DEBUG", "False").lower() == "true",
+            "DATABASE_URL": os.getenv("DATABASE_URL", "sqlite:///erp01.db"),
+            "SECRET_KEY": os.getenv(
+                "SECRET_KEY", "dev-secret-key-change-in-production"
+            ),
+            "LOG_LEVEL": os.getenv("LOG_LEVEL", "INFO"),
         }
 
     def get(self, key: str, default: Any = None) -> Any:

@@ -15,7 +15,7 @@ def main():
     """Main application entry point."""
     app_name = os.getenv("APP_NAME", "ERP01")
     app_env = os.getenv("APP_ENV", "development")
-    
+
     print(f"Starting {app_name} in {app_env} mode...")
     print("Application initialized successfully!")
 
