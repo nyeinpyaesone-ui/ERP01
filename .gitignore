@@ -21,49 +21,35 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv/
-.env/
-env.bak/
-venv.bak/
-
-# Django
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media/
-staticfiles/
-.envrc
-
 # Testing
 .coverage
 htmlcov/
+coverage/
+.nosetests
 .pytest_cache/
-.tox/
-.coverage.*
 
-# IDE
+# Environment
+.env
+.env.local
+*.env.*
+
+# Dependencies
+.venv/
+venv/
+.ENV
+env/
+
+# Editors
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Environment variables
-.env
-.env.local
-.env.*
+*.tmp
 
 # Logs
 *.log
 
-# Coverage
-coverage/
+# OS
+.DS_Store
+Thumbs.db
 ```
