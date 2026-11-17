@@ -38,8 +38,7 @@ def test_business_profile_update_requires_staff():
         format="json",
     )
     assert response.status_code == 403
-    profile = BusinessProfile.objects.get(singleton_key=1)
-    assert profile.business_name == "My Business"
+    assert not BusinessProfile.objects.filter(singleton_key=1).exists()
 
 
 @pytest.mark.django_db
