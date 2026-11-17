@@ -9,7 +9,7 @@ from src.modules.sales.models import Customer, Order
 
 @pytest.mark.django_db
 def test_customer_api_creates_customer():
-    user = get_user_model().objects.create_user("api-user", password="secret")
+    user = get_user_model().objects.create_user("api-user", password="secret", is_staff=True)
     client = APIClient()
     client.force_authenticate(user=user)
 
@@ -29,7 +29,7 @@ def test_customer_api_creates_customer():
 
 @pytest.mark.django_db
 def test_order_api_records_authenticated_creator():
-    user = get_user_model().objects.create_user("sales-user", password="secret")
+    user = get_user_model().objects.create_user("sales-user", password="secret", is_staff=True)
     customer = Customer.objects.create(
         name="Acme Corporation",
         email="buyer@acme.example",

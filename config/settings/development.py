@@ -1,71 +1,42 @@
-"""
-Django Settings - Development Environment
-==========================================
-Configuration for local development.
-"""
+"""Local development settings."""
+
+import os
 
 from .base import *  # noqa: F401, F403
 
-# Override settings for development
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "1").lower() in {"1", "true", "yes"}
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0").split(",")
+    if host.strip()
+]
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
-# Database configuration for development
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'erp_db'),
-        'USER': os.getenv('DB_USER', 'erp_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'changeme_in_production'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "erp_db"),
+        "USER": os.getenv("DB_USER", "erp_user"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "changeme_in_production"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "5432"),
+        "CONN_MAX_AGE": int(os.getenv("DB_CONN_MAX_AGE", "60")),
     }
 }
 
-# Enable Django Debug Toolbar
-INSTALLED_APPS += [
-    'debug_toolbar',
-]
-
-MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-]
-
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
-# Logging for development
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'erp': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
+    "root": {"handlers": ["console"], "level": "DEBUG" if DEBUG else "INFO"},
 }
