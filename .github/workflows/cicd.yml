@@ -38,6 +38,7 @@ jobs:
           --health-retries 10
     env:
       DJANGO_SETTINGS_MODULE: config.settings.ci
+      PYTHONPATH: .
       DB_NAME: erp_test
       DB_USER: erp_test
       DB_PASSWORD: erp_test
