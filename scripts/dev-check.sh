@@ -19,9 +19,9 @@ fi
 echo ""
 echo "[1/3] Checking code formatting (black)..."
 if black --check . ; then
-    echo "✅ Formatting check passed"
+    echo "[OK] Formatting check passed"
 else
-    echo "❌ Formatting check failed. Run 'black .' to fix."
+    echo "[ERROR] Formatting check failed. Run 'black .' to fix."
     exit 1
 fi
 
@@ -29,9 +29,9 @@ fi
 echo ""
 echo "[2/3] Running linter (flake8)..."
 if flake8 . ; then
-    echo "✅ Linting passed"
+    echo "[OK] Linting passed"
 else
-    echo "❌ Linting failed. Please fix the issues above."
+    echo "[ERROR] Linting failed. Please fix the issues above."
     exit 1
 fi
 
@@ -39,13 +39,13 @@ fi
 echo ""
 echo "[3/3] Running tests with coverage (pytest)..."
 if pytest --cov=. --cov-fail-under=80 ; then
-    echo "✅ Tests passed with sufficient coverage"
+    echo "[OK] Tests passed with sufficient coverage"
 else
-    echo "❌ Tests failed or coverage below 80%"
+    echo "[ERROR] Tests failed or coverage below 80%"
     exit 1
 fi
 
 echo ""
 echo "=========================================="
-echo "✅ All quality checks passed!"
+echo "[OK] All quality checks passed!"
 echo "=========================================="

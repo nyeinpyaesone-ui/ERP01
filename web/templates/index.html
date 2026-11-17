@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP01 - Enterprise Resource Planning</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>ERP01</h1>
+                <p>Enterprise System</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <a href="#" class="nav-link">
+                        <span class="icon">D</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="icon">I</span>
+                        <span>Inventory</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="icon">F</span>
+                        <span>Finance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="icon">H</span>
+                        <span>HR</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span class="icon">S</span>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">Menu</button>
+                    <h2>Dashboard</h2>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <span class="user-name">Admin User</span>
+                        <span class="user-role">Administrator</span>
+                    </div>
+                    <button class="btn-icon" title="Notifications">N</button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="content-wrapper">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">P</div>
+                        <div class="stat-details">
+                            <h3>1,234</h3>
+                            <p>Total Products</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">R</div>
+                        <div class="stat-details">
+                            <h3>$45,678</h3>
+                            <p>Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">E</div>
+                        <div class="stat-details">
+                            <h3>156</h3>
+                            <p>Employees</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">G</div>
+                        <div class="stat-details">
+                            <h3>+12.5%</h3>
+                            <p>Growth</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Section -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Recent Activity</h3>
+                        <button class="btn-text">View All</button>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">C</div>
+                            <div class="activity-details">
+                                <p><strong>Order #1234</strong> completed successfully</p>
+                                <span class="activity-time">2 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">A</div>
+                            <div class="activity-details">
+                                <p><strong>New product</strong> added to inventory</p>
+                                <span class="activity-time">15 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">U</div>
+                            <div class="activity-details">
+                                <p><strong>New employee</strong> onboarded</p>
+                                <span class="activity-time">1 hour ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modules Status -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h3>Module Status</h3>
+                    </div>
+                    <div class="modules-grid" id="modulesGrid">
+                        <div class="module-card status-active">
+                            <h4>Dashboard</h4>
+                            <span class="status-badge">Active</span>
+                        </div>
+                        <div class="module-card status-active">
+                            <h4>Inventory</h4>
+                            <span class="status-badge">Active</span>
+                        </div>
+                        <div class="module-card status-active">
+                            <h4>Finance</h4>
+                            <span class="status-badge">Active</span>
+                        </div>
+                        <div class="module-card status-pending">
+                            <h4>HR</h4>
+                            <span class="status-badge">Pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
