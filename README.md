@@ -1,18 +1,21 @@
 # ERP01
 
-A Python-based Enterprise Resource Planning (ERP) system.
+A Python-based Enterprise Resource Planning (ERP) system with a modern web interface.
 
 ## Description
 
-ERP01 is an enterprise resource planning solution designed to help businesses manage and integrate their core processes efficiently.
+ERP01 is an enterprise resource planning solution designed to help businesses manage and integrate their core processes efficiently. It features a modular architecture and includes both CLI and web-based interfaces.
 
 ## Features
 
-- 📦 Modular architecture for easy customization
-- 🔒 Secure authentication and authorization
-- 📊 Real-time data analytics and reporting
-- 🔄 Integration capabilities with third-party systems
-- 💼 Multi-user support with role-based access control
+- Modular architecture for easy customization
+- Secure authentication and authorization
+- Real-time data analytics and reporting
+- Integration capabilities with third-party systems
+- Multi-user support with role-based access control
+- Modern, responsive web interface
+- Mobile-friendly dashboard
+- RESTful API endpoints
 
 ## Installation
 
@@ -47,13 +50,57 @@ cp .env.example .env
 ```
 
 5. Run the application:
+
+**CLI Mode:**
 ```bash
 python main.py
 ```
 
+**Web Interface Mode:**
+```bash
+# Set USE_WEB=true in your .env file, then run:
+python main.py
+```
+
+The web interface will be available at http://localhost:5000
+
 ## Usage
 
-[Add usage instructions here]
+### CLI Mode
+
+Run the application in command-line mode:
+
+```bash
+python main.py
+```
+
+This will display system information and status in the terminal.
+
+### Web Interface
+
+To enable the web interface, set `USE_WEB=true` in your `.env` file:
+
+```env
+USE_WEB=true
+```
+
+Then run the application:
+
+```bash
+python main.py
+```
+
+Access the web dashboard at http://localhost:5000
+
+#### Web Features
+
+- **Dashboard**: View key metrics and statistics
+- **Navigation**: Access different modules (Inventory, Finance, HR, etc.)
+- **Real-time Updates**: Dynamic module status updates
+- **Responsive Design**: Works on desktop and mobile devices
+- **API Endpoints**: 
+  - `/api/status` - System status
+  - `/api/modules` - Module information
 
 ## Project Structure
 
@@ -63,6 +110,13 @@ erp01/
 ├── config/              # Configuration files
 ├── modules/             # ERP modules
 ├── utils/               # Utility functions
+├── web/                 # Web interface
+│   ├── __init__.py      # Flask app factory
+│   ├── routes/          # URL routes
+│   ├── templates/       # HTML templates
+│   └── static/          # CSS, JS, images
+│       ├── css/
+│       └── js/
 ├── tests/               # Test cases
 └── docs/                # Documentation
 ```
@@ -82,6 +136,31 @@ This project follows PEP 8 guidelines. To check code style:
 ```bash
 flake8 .
 ```
+
+To format code automatically:
+
+```bash
+black .
+```
+
+### Adding New Modules
+
+1. Create a new module in the `modules/` directory
+2. Implement the `BaseModule` interface
+3. Add routes in `web/routes/` if web access is needed
+4. Update tests accordingly
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| APP_NAME | Application name | ERP01 |
+| APP_ENV | Environment (development/production) | development |
+| DEBUG | Enable debug mode | True |
+| DATABASE_URL | Database connection string | sqlite:///erp01.db |
+| SECRET_KEY | Secret key for sessions | dev-secret-key |
+| LOG_LEVEL | Logging level | INFO |
+| USE_WEB | Enable web interface | False |
 
 ## Contributing
 
@@ -103,8 +182,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [List any acknowledgments here]
+- Flask web framework
+- Modern UI design patterns
+- Enterprise software best practices
 
 ---
 
-*Built with using Python*
+*Built with Python and Flask*
